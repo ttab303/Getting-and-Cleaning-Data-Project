@@ -35,21 +35,21 @@ names(y_test) <- "activity"
 All_train <- cbind(subject_train, y_train, X_train)
 All_test <- cbind(subject_test, y_test, X_test)
 
-combined <- rbind(All_train, All_test)
+Train_test <- rbind(All_train, All_test)
 
 
 ## STEP 2: Extracts only the measurements on the mean and standard
 ## deviation for each measurement.
 
 # determine which columns contain "mean()" or "std()"
-meanstdcolum <- grepl("mean\\(\\)", names(combined)) |
-    grepl("std\\(\\)", names(combined))
+meanstdcolum <- grepl("mean\\(\\)", names(Train_test)) |
+    grepl("std\\(\\)", names(Train_test))
 
 # ensure that we also keep the subjectID and activity columns
 meanstdcolum[1:2] <- TRUE
 
 # remove unnecessary columns
-combined <- combined[, meanstdcolum]
+Train_test <- Train_test[, meanstdcolum]
 
 
 ## STEP 3: Uses descriptive activity names to name the activities
@@ -58,7 +58,7 @@ combined <- combined[, meanstdcolum]
 ## activity names. 
 
 # convert the activity column from integer to factor
-combined$activity <- factor(combined$activity, labels=c("Walking",
+Train_test$activity <- factor(Train_test$activity, labels=c("Walking",
     "Walking Upstairs", "Walking Downstairs", "Sitting", "Standing", "Laying"))
 
 
@@ -66,8 +66,8 @@ combined$activity <- factor(combined$activity, labels=c("Walking",
 ## average of each variable for each activity and each subject.
 
 # create the tidy data set
-tid <- melt(combined, id=c("subjectID","activity"))
+tid <- melt(Train_test, id=c("subjectID","activity"))
 tidy <- dcast(tid, subjectID+activity ~ variable, mean)
 
 # write the tidy data set to a file
-write.csv(tidy, "tidy.csv", row.names=FALSE)
+write.csv(tidy, "tidy.txt", row.names=FALSE)
